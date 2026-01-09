@@ -1,0 +1,64 @@
+name: Deploy GCP VM and BindPlane Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      BINDPLANE_ADDRESS: ${{ secrets.BINDPLANE_ADDRESS }}
+      BINDPLANE_API_KEY: ${{ secrets.BINDPLANE_API_KEY }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # ----------------------------
+    # Authenticate to GCP (OIDC)
+    # ----------------------------
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: "projects/424275822356/locations/global/workloadIdentityPools/github-actions-pool/providers/github"
+        service_account: "bindplane-service@applied-polymer-479818-t7.iam.gserviceaccount.com"
+
+    - name: Setup gcloud
+      uses: google-github-actions/setup-gcloud@v2
+
+    # ----------------------------
+    # Setup Terraform
+    # ----------------------------
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.14.2
+
+    # ----------------------------
+    # Terraform - Infrastructure
+    # ----------------------------
+    - name: Terraform Init (Infra)
+      working-directory: infra
+      run: terraform init
+
+    - name: Terraform Apply (Infra)
+      working-directory: infra
+      run: terraform apply -auto-approve
+
+    # ----------------------------
+    # Terraform - BindPlane Config
+    # ----------------------------
+    - name: Terraform Init (BindPlane)
+      working-directory: bindplane
+      run: terraform init
+
+    - name: Terraform Apply (BindPlane)
+      working-directory: bindplane
+      run: terraform apply -auto-approve
