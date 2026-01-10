@@ -12,13 +12,25 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     env:
+      # Terraform CI mode
       TF_IN_AUTOMATION: true
+
+      # Terraform variables (VERY IMPORTANT)
+      TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
+      TF_VAR_region: ${{ secrets.GCP_REGION }}
+      TF_VAR_zone: ${{ secrets.GCP_ZONE }}
+
+      # BindPlane provider (read automatically by provider)
       BINDPLANE_ADDRESS: ${{ secrets.BINDPLANE_ADDRESS }}
       BINDPLANE_API_KEY: ${{ secrets.BINDPLANE_API_KEY }}
 
     steps:
+    # ----------------------------
+    # Checkout code
+    # ----------------------------
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -34,8 +46,8 @@ jobs:
     - name: Setup gcloud
       uses: google-github-actions/setup-gcloud@v2
 
-    - name: Set GCP project
-      run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+    - name: Set GCP Project
+      run: gcloud config set project "${{ secrets.GCP_PROJECT_ID }}"
 
     # ----------------------------
     # Setup Terraform
@@ -45,24 +57,32 @@ jobs:
       with:
         terraform_version: 1.14.2
 
-    # ----------------------------
+    # ============================
     # Terraform - Infrastructure
-    # ----------------------------
+    # ============================
     - name: Terraform Init (Infra)
       working-directory: infra
       run: terraform init -upgrade
 
+    - name: Terraform Plan (Infra)
+      working-directory: infra
+      run: terraform plan -out=tfplan
+
     - name: Terraform Apply (Infra)
       working-directory: infra
-      run: terraform apply -auto-approve
+      run: terraform apply -auto-approve tfplan
 
-    # ----------------------------
+    # ============================
     # Terraform - BindPlane Config
-    # ----------------------------
+    # ============================
     - name: Terraform Init (BindPlane)
       working-directory: bindplane
       run: terraform init -upgrade
 
+    - name: Terraform Plan (BindPlane)
+      working-directory: bindplane
+      run: terraform plan -out=tfplan
+
     - name: Terraform Apply (BindPlane)
       working-directory: bindplane
-      run: terraform apply -auto-approve
+      run: terraform apply -auto-approve tfplan
