@@ -15,27 +15,27 @@ jobs:
     timeout-minutes: 30
 
     env:
-      # Terraform CI mode
+      # Terraform automation
       TF_IN_AUTOMATION: true
 
-      # Terraform variables (VERY IMPORTANT)
+      # Terraform variables (CRITICAL)
       TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
       TF_VAR_region: ${{ secrets.GCP_REGION }}
       TF_VAR_zone: ${{ secrets.GCP_ZONE }}
 
-      # BindPlane provider (read automatically by provider)
-      BINDPLANE_ADDRESS: ${{ secrets.BINDPLANE_ADDRESS }}
+      # BindPlane provider (CRITICAL FIX)
+      BINDPLANE_REMOTE_URL: ${{ secrets.BINDPLANE_ADDRESS }}
       BINDPLANE_API_KEY: ${{ secrets.BINDPLANE_API_KEY }}
 
     steps:
     # ----------------------------
-    # Checkout code
+    # Checkout
     # ----------------------------
     - name: Checkout repository
       uses: actions/checkout@v4
 
     # ----------------------------
-    # Authenticate to GCP (OIDC)
+    # GCP Authentication (OIDC)
     # ----------------------------
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v2
@@ -50,7 +50,7 @@ jobs:
       run: gcloud config set project "${{ secrets.GCP_PROJECT_ID }}"
 
     # ----------------------------
-    # Setup Terraform
+    # Terraform Setup
     # ----------------------------
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
@@ -73,7 +73,7 @@ jobs:
       run: terraform apply -auto-approve tfplan
 
     # ============================
-    # Terraform - BindPlane Config
+    # Terraform - BindPlane
     # ============================
     - name: Terraform Init (BindPlane)
       working-directory: bindplane
