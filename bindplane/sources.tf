@@ -1,11 +1,15 @@
 resource "bindplane_source" "journald_logs" {
-  rollout = true
-  name    = "journald-logs-copy-v2"
-  type    = "journald"
+  name = "journald-logs-copy-v2"
+  type = "journald"
+
+  configuration = jsonencode({
+    include_units = ["docker.service"]
+  })
 }
 
 resource "bindplane_source" "host_metrics" {
-  rollout = true
-  name    = "host-metrics-copy-v2"
-  type    = "host"
-} 
+  name = "host-metrics-copy-v2"
+  type = "host_metrics"
+
+  configuration = jsonencode({})
+}
