@@ -10,9 +10,9 @@ provider "bindplane" {
 ################################
 # SOURCES (Unique Names)
 ################################
-resource "bindplane_source" "host_metrics_v2" {
+resource "bindplane_source" "host_metrics_v3" {
   rollout = true
-  name    = "host-metrics-copy-v2"
+  name    = "host-metrics-copy-v3"
   type    = "host"
 
   parameters_json = jsonencode([
@@ -27,18 +27,18 @@ resource "bindplane_source" "host_metrics_v2" {
   ])
 }
 
-resource "bindplane_source" "journald_logs_v2" {
+resource "bindplane_source" "journald_logs_v3" {
   rollout = true
-  name    = "journald-logs-copy-v2"
+  name    = "journald-logs-copy-v3"
   type    = "journald"
 }
 
 ################################
 # PROCESSOR (Unique Name)
 ################################
-resource "bindplane_processor" "batch_v2" {
+resource "bindplane_processor" "batch_v3" {
   rollout = true
-  name    = "batch-copy-v2"
+  name    = "batch-copy-v3"
   type    = "batch"
 
   parameters_json = jsonencode([
@@ -60,7 +60,7 @@ resource "bindplane_processor" "batch_v2" {
 ################################
 # CONFIGURATION: LOGS
 ################################
-resource "bindplane_configuration" "logs_config_v2" {
+resource "bindplane_configuration" "logs_config_v3" {
   rollout  = true
   name     = "bindplane-agent-vm-logs"
   platform = "linux"
@@ -71,8 +71,8 @@ resource "bindplane_configuration" "logs_config_v2" {
   }
 
   source {
-    name       = bindplane_source.journald_logs_v2.name
-    processors = [bindplane_processor.batch_v2.name]
+    name       = bindplane_source.journald_logs_v3.name
+    processors = [bindplane_processor.batch_v3.name]
   }
 
   destination {
@@ -83,7 +83,7 @@ resource "bindplane_configuration" "logs_config_v2" {
 ################################
 # CONFIGURATION: METRICS
 ################################
-resource "bindplane_configuration" "metrics_config_v2" {
+resource "bindplane_configuration" "metrics_config_v3" {
   rollout  = true
   name     = "bindplane-agent-vm-metrics"
   platform = "linux"
@@ -94,8 +94,8 @@ resource "bindplane_configuration" "metrics_config_v2" {
   }
 
   source {
-    name       = bindplane_source.host_metrics_v2.name
-    processors = [bindplane_processor.batch_v2.name]
+    name       = bindplane_source.host_metrics_v3.name
+    processors = [bindplane_processor.batch_v3.name]
   }
 
   destination {
