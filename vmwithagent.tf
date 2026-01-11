@@ -19,7 +19,7 @@ resource "google_project_service" "compute" {
 ################################
 # FIREWALL (DEFAULT VPC)
 ################################
-resource "google_compute_firewall" "allow_ssh_bindplane" {
+resource "google_compute_firewall" "allow_ssh_bindplane-test" {
   name    = "allow-ssh-bindplane-test"
   network = "default"
 
@@ -76,7 +76,7 @@ resource "google_compute_instance" "bindplane_vm" {
 
   depends_on = [
     google_project_service.compute,
-    google_compute_firewall.allow_ssh_bindplane
+    google_compute_firewall.allow_ssh_bindplane-test
   ]
 }
 
