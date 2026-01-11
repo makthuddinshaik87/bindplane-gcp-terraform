@@ -10,7 +10,7 @@ provider "bindplane" {
 ################################
 # SOURCES (Unique Names)
 ################################
-resource "bindplane_source" "host_metrics_v3" {
+resource "bindplane_source" "host_metrics_v4" {
   rollout = true
   name    = "host-metrics-copy-v3"
   type    = "host"
@@ -27,18 +27,18 @@ resource "bindplane_source" "host_metrics_v3" {
   ])
 }
 
-resource "bindplane_source" "journald_logs_v3" {
+resource "bindplane_source" "journald_logs_v4" {
   rollout = true
-  name    = "journald-logs-copy-v3"
+  name    = "journald-logs-copy-v4"
   type    = "journald"
 }
 
 ################################
 # PROCESSOR (Unique Name)
 ################################
-resource "bindplane_processor" "batch_v3" {
+resource "bindplane_processor" "batch_v4" {
   rollout = true
-  name    = "batch-copy-v3"
+  name    = "batch-copy-v4"
   type    = "batch"
 
   parameters_json = jsonencode([
@@ -60,9 +60,9 @@ resource "bindplane_processor" "batch_v3" {
 ################################
 # CONFIGURATION: LOGS
 ################################
-resource "bindplane_configuration" "logs_config_v3" {
+resource "bindplane_configuration" "logs_config_v4" {
   rollout  = true
-  name     = "bindplane-agent-vm-logs"
+  name     = "bindplane-agent-vm-logs-v4"
   platform = "linux"
 
   labels = {
@@ -71,8 +71,8 @@ resource "bindplane_configuration" "logs_config_v3" {
   }
 
   source {
-    name       = bindplane_source.journald_logs_v3.name
-    processors = [bindplane_processor.batch_v3.name]
+    name       = bindplane_source.journald_logs_v4.name
+    processors = [bindplane_processor.batch_v4.name]
   }
 
   destination {
@@ -83,9 +83,9 @@ resource "bindplane_configuration" "logs_config_v3" {
 ################################
 # CONFIGURATION: METRICS
 ################################
-resource "bindplane_configuration" "metrics_config_v3" {
+resource "bindplane_configuration" "metrics_config_v4" {
   rollout  = true
-  name     = "bindplane-agent-vm-metrics"
+  name     = "bindplane-agent-vm-metrics-v4"
   platform = "linux"
 
   labels = {
@@ -94,8 +94,8 @@ resource "bindplane_configuration" "metrics_config_v3" {
   }
 
   source {
-    name       = bindplane_source.host_metrics_v3.name
-    processors = [bindplane_processor.batch_v3.name]
+    name       = bindplane_source.host_metrics_v4.name
+    processors = [bindplane_processor.batch_v4.name]
   }
 
   destination {
