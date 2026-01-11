@@ -76,7 +76,7 @@ resource "google_compute_instance" "bindplane_vm_test1" {
 
   depends_on = [
     google_project_service.compute,
-    google_compute_firewall.allow_ssh_bindplane-test
+    google_compute_firewall.allow_ssh_bindplane_test1
   ]
 }
 
@@ -84,13 +84,13 @@ resource "google_compute_instance" "bindplane_vm_test1" {
 # OUTPUTS
 ################################
 output "vm_name" {
-  value = google_compute_instance.bindplane_vm.name
+  value = google_compute_instance.bindplane_vm_test1.name
 }
 
 output "vm_public_ip" {
-  value = google_compute_instance.bindplane_vm.network_interface[0].access_config[0].nat_ip
+  value = google_compute_instance.bindplane_vm_test1.network_interface[0].access_config[0].nat_ip
 }
 
 output "vm_internal_ip" {
-  value = google_compute_instance.bindplane_vm.network_interface[0].network_ip
+  value = google_compute_instance.bindplane_vm_test1.network_interface[0].network_ip
 }
