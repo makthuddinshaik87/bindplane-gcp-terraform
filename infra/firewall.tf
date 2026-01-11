@@ -1,5 +1,5 @@
 resource "google_compute_firewall" "allow_ssh_bindplane" {
-  name    = "allow-ssh-bindplane5"
+  name    = "allow-ssh-bindplane6"
   network = "default"
 
   allow {

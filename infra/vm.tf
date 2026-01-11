@@ -1,5 +1,5 @@
 resource "google_compute_instance" "bindplane_agent_vm" {
-  name         = "bindplane-agent-vm5"
+  name         = "bindplane-agent-vm6"
   machine_type = "e2-medium"
 
   boot_disk {
