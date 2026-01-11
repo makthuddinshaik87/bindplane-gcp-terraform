@@ -20,7 +20,7 @@ resource "google_project_service" "compute" {
 # FIREWALL (DEFAULT VPC)
 ################################
 resource "google_compute_firewall" "allow_ssh_bindplane" {
-  name    = "allow-ssh-bindplane"
+  name    = "allow-ssh-bindplane-test"
   network = "default"
 
   allow {
@@ -37,7 +37,7 @@ resource "google_compute_firewall" "allow_ssh_bindplane" {
 # VM WITH BINDPLANE AGENT
 ################################
 resource "google_compute_instance" "bindplane_vm" {
-  name         = "bindplane-agent-vm"
+  name         = "bindplane-agent-vm-test"
   machine_type = "e2-medium"
   zone         = "us-central1-a"
 
