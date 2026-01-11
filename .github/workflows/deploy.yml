@@ -1,8 +1,8 @@
-name: Deploy GCP VM and BindPlane Pipeline
+name: Terraform Dev Deployment (GCP + BindPlane)
 
 on:
   push:
-    branches: ["main"]
+    branches: ["dev"]
   workflow_dispatch:
 
 permissions:
@@ -10,58 +10,61 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  terraform:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
     env:
       TF_IN_AUTOMATION: true
 
-      # BindPlane provider environment variables (CRITICAL)
-      BINDPLANE_ADDRESS: ${{ secrets.BINDPLANE_ADDRESS }}
-      BINDPLANE_API_KEY: ${{ secrets.BINDPLANE_API_KEY }}
+      # ==========================
+      # BindPlane (provider expects these via vars)
+      # ==========================
+      TF_VAR_bindplane_remote_url: ${{ secrets.BINDPLANE_REMOTE_URL }}
+      TF_VAR_bindplane_api_key: ${{ secrets.BINDPLANE_API_KEY }}
 
-      # GCP Terraform variables
+      # ==========================
+      # GCP
+      # ==========================
       TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
       TF_VAR_region: ${{ secrets.GCP_REGION }}
       TF_VAR_zone: ${{ secrets.GCP_ZONE }}
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      # ----------------------------
+      # Checkout
+      # ----------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v2
-      with:
-        workload_identity_provider: "projects/424275822356/locations/global/workloadIdentityPools/github-actions-pool/providers/github"
-        service_account: "bindplane-service@applied-polymer-479818-t7.iam.gserviceaccount.com"
+      # ----------------------------
+      # Authenticate to GCP (OIDC)
+      # ----------------------------
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: "projects/424275822356/locations/global/workloadIdentityPools/github-actions-pool/providers/github"
+          service_account: "bindplane-service@applied-polymer-479818-t7.iam.gserviceaccount.com"
 
-    - name: Setup gcloud
-      uses: google-github-actions/setup-gcloud@v2
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: 1.14.2
+      # ----------------------------
+      # Setup Terraform
+      # ----------------------------
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.14.2
 
-    # ----------------------------
-    # Terraform Infra
-    # ----------------------------
-    - name: Terraform Init (Infra)
-      working-directory: infra
-      run: terraform init -upgrade
+      # ----------------------------
+      # Terraform (RUN FROM ROOT)
+      # ----------------------------
+      - name: Terraform Init
+        run: terraform init -upgrade
 
-    - name: Terraform Apply (Infra)
-      working-directory: infra
-      run: terraform apply -auto-approve
+      - name: Terraform Plan
+        run: terraform plan
 
-    # ----------------------------
-    # Terraform BindPlane
-    # ----------------------------
-    - name: Terraform Init (BindPlane)
-      working-directory: bindplane
-      run: terraform init -upgrade
-
-    - name: Terraform Apply (BindPlane)
-      working-directory: bindplane
-      run: terraform apply -auto-approve
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
