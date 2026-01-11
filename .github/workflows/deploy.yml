@@ -17,14 +17,14 @@ jobs:
     env:
       TF_IN_AUTOMATION: true
 
+      # BindPlane provider environment variables (CRITICAL)
+      BINDPLANE_ADDRESS: ${{ secrets.BINDPLANE_ADDRESS }}
+      BINDPLANE_API_KEY: ${{ secrets.BINDPLANE_API_KEY }}
+
       # GCP Terraform variables
       TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
       TF_VAR_region: ${{ secrets.GCP_REGION }}
       TF_VAR_zone: ${{ secrets.GCP_ZONE }}
-
-      # BindPlane Terraform variables (CRITICAL)
-      TF_VAR_bindplane_address: ${{ secrets.BINDPLANE_ADDRESS }}
-      TF_VAR_bindplane_api_key: ${{ secrets.BINDPLANE_API_KEY }}
 
     steps:
     - name: Checkout repository
