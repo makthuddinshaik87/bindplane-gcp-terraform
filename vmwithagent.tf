@@ -19,8 +19,8 @@ resource "google_project_service" "compute" {
 ################################
 # FIREWALL (DEFAULT VPC)
 ################################
-resource "google_compute_firewall" "allow_ssh_bindplane_test5" {
-  name    = "allow-ssh-bindplane-test5"
+resource "google_compute_firewall" "allow_ssh_bindplane_test6" {
+  name    = "allow-ssh-bindplane-test6"
   network = "default"
 
   allow {
@@ -36,8 +36,8 @@ resource "google_compute_firewall" "allow_ssh_bindplane_test5" {
 ################################
 # VM WITH BINDPLANE AGENT
 ################################
-resource "google_compute_instance" "bindplane_vm_test5" {
-  name         = "bindplane-agent-vm-test5"
+resource "google_compute_instance" "bindplane_vm_test6" {
+  name         = "bindplane-agent-vm-test6"
   machine_type = "e2-medium"
   zone         = "us-central1-a"
 
@@ -76,7 +76,7 @@ resource "google_compute_instance" "bindplane_vm_test5" {
 
   depends_on = [
     google_project_service.compute,
-    google_compute_firewall.allow_ssh_bindplane_test5
+    google_compute_firewall.allow_ssh_bindplane_test6
   ]
 }
 
@@ -84,13 +84,13 @@ resource "google_compute_instance" "bindplane_vm_test5" {
 # OUTPUTS
 ################################
 output "vm_name" {
-  value = google_compute_instance.bindplane_vm_test5.name
+  value = google_compute_instance.bindplane_vm_test6.name
 }
 
 output "vm_public_ip" {
-  value = google_compute_instance.bindplane_vm_test5.network_interface[0].access_config[0].nat_ip
+  value = google_compute_instance.bindplane_vm_test6.network_interface[0].access_config[0].nat_ip
 }
 
 output "vm_internal_ip" {
-  value = google_compute_instance.bindplane_vm_test5.network_interface[0].network_ip
+  value = google_compute_instance.bindplane_vm_test6.network_interface[0].network_ip
 }
