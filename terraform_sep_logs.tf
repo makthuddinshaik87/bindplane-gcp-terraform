@@ -10,9 +10,9 @@ provider "bindplane" {
 ################################
 # SOURCES (Unique Names)
 ################################
-resource "bindplane_source" "host_metrics_v9" {
+resource "bindplane_source" "host_metrics_v10" {
   rollout = true
-  name    = "host-metrics-copy-v9"
+  name    = "host-metrics-copy-v10"
   type    = "host"
 
   parameters_json = jsonencode([
@@ -27,18 +27,18 @@ resource "bindplane_source" "host_metrics_v9" {
   ])
 }
 
-resource "bindplane_source" "journald_logs_v9" {
+resource "bindplane_source" "journald_logs_v10" {
   rollout = true
-  name    = "journald-logs-copy-v9"
+  name    = "journald-logs-copy-v10"
   type    = "journald"
 }
 
 ################################
 # PROCESSOR (Unique Name)
 ################################
-resource "bindplane_processor" "batch_v9" {
+resource "bindplane_processor" "batch_v10" {
   rollout = true
-  name    = "batch-copy-v9"
+  name    = "batch-copy-v10"
   type    = "batch"
 
   parameters_json = jsonencode([
@@ -60,9 +60,9 @@ resource "bindplane_processor" "batch_v9" {
 ################################
 # CONFIGURATION: LOGS
 ################################
-resource "bindplane_configuration" "logs_config_v9" {
+resource "bindplane_configuration" "logs_config_v10" {
   rollout  = true
-  name     = "bindplane-agent-vm-logs-v9"
+  name     = "bindplane-agent-vm-logs-v10"
   platform = "linux"
 
   labels = {
@@ -71,8 +71,8 @@ resource "bindplane_configuration" "logs_config_v9" {
   }
 
   source {
-    name       = bindplane_source.journald_logs_v9.name
-    processors = [bindplane_processor.batch_v9.name]
+    name       = bindplane_source.journald_logs_v10.name
+    processors = [bindplane_processor.batch_v10.name]
   }
 
   destination {
@@ -83,9 +83,9 @@ resource "bindplane_configuration" "logs_config_v9" {
 ################################
 # CONFIGURATION: METRICS
 ################################
-resource "bindplane_configuration" "metrics_config_v9" {
+resource "bindplane_configuration" "metrics_config_v10" {
   rollout  = true
-  name     = "bindplane-agent-vm-metrics-v9"
+  name     = "bindplane-agent-vm-metrics-v10"
   platform = "linux"
 
   labels = {
@@ -94,8 +94,8 @@ resource "bindplane_configuration" "metrics_config_v9" {
   }
 
   source {
-    name       = bindplane_source.host_metrics_v9.name
-    processors = [bindplane_processor.batch_v9.name]
+    name       = bindplane_source.host_metrics_v10.name
+    processors = [bindplane_processor.batch_v10.name]
   }
 
   destination {
